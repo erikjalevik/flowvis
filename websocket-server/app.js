@@ -37,7 +37,7 @@ var server = ws.createServer(function (conn) {
 function filterMessage(message) {
 
   // Pick the properties we need
-  var msg = _.pick(message, ['nick', 'content', 'created_at', 'tags', 'thread_id', ]);
+  var msg = _.pick(message, ['nick', 'avatar', 'content', 'created_at', 'tags', 'thread_id']);
 
   // Remove tags from message contente as they are in the tags array already
   var regexp = new RegExp('#([^\\s]*)','g');

@@ -20,7 +20,8 @@
         })[0];
 
         // Message does not include the nickname, let's add it
-        message.author = author;
+        message.nick = author.nick;
+        message.avatar = author.avatar;
 
         console.log('message', message);
 
