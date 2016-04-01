@@ -13,6 +13,9 @@ class TextBox  {
   color boxColor = #800000;
   color wordColor = #E00000;
 
+  float fadeMultiplier = 0.995;
+  float alpha = 255;
+
   AudioInstrument instr;
 
   // Constructor
@@ -47,7 +50,7 @@ class TextBox  {
     FixtureDef fd = new FixtureDef();
     fd.shape = sd;
     // Parameters that affect physics
-    fd.density = 1;
+    fd.density = 0.6;
     fd.friction = 0.3;
     fd.restitution = 0.5;
 
@@ -58,7 +61,6 @@ class TextBox  {
 
     body = box2d.createBody(bd);
     body.createFixture(fd);
-    //body.setMassFromShapes();
 
     // Give it some initial random velocity
     body.setLinearVelocity(new Vec2(random(-16, 16), random(-15, 15)));
@@ -74,10 +76,7 @@ class TextBox  {
 
   // Is the box ready for deletion?
   boolean done() {
-    // Let's find the screen position of the particle
-    Vec2 pos = box2d.getBodyPixelCoord(body);
-    // Is it off the bottom of the screen?
-    if (pos.y > height + w*h) {
+    if (alpha < 1) {
       killBody();
       return true;
     }
@@ -88,21 +87,23 @@ class TextBox  {
   void display() {
     // We look at the body and get its screen position
     Vec2 pos = box2d.getBodyPixelCoord(body);
+    
     // Get its angle of rotation
     float a = body.getAngle();
 
     rectMode(CENTER);
     pushMatrix();
     
-    translate(pos.x,pos.y);
+    translate(pos.x,pos.y); 
     rotate(-a);
     
-    fill(boxColor);
-    stroke(#400000);
+    fill(boxColor, alpha);
+    alpha = alpha * fadeMultiplier;
+    stroke(#400000, alpha);
     rect(0, 0, w, h);
 
     textAlign(CENTER);
-    fill(wordColor);
+    fill(wordColor, alpha);
     noStroke();
     text(text, 0, 5);
     
