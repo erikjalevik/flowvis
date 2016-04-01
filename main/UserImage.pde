@@ -21,8 +21,9 @@ class UserImage {
     }
     else {
       img = loadImage(imageUrl, "jpg");
-      img.save(cacheUrlForUrl(imageUrl));
+      img.save(dataPath("./cache/" + cacheUrlForUrl(imageUrl)));
     }
+    
     
     // Add the box to the box2d world
     makeBody(new Vec2(x, y));
