@@ -23,7 +23,8 @@ var server = ws.createServer(function (conn) {
 		}
 	})
 	conn.on("close", function (code, reason) {
-		console.log("Connection closed")
+		console.log("Connection closed");
+		delete all_active_connections[conn.id];
 	})
 }).listen(8001)
 
