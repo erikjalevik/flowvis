@@ -13,7 +13,7 @@ class TextBox  {
   color boxColor = #800000;
   color wordColor = #E00000;
 
-  SynthInstrument instr;
+  AudioInstrument instr;
 
   // Constructor
   TextBox(String _text, float x, float y) {
@@ -29,7 +29,7 @@ class TextBox  {
     Body body = makeBody(new Vec2(x, y), w, h);
 
     // Create an instrument for box
-    instr = new SynthInstrument(audio.getSynth());
+    instr = audio.createInstrument();
 
     body.setUserData(this);
   }

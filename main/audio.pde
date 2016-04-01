@@ -1,12 +1,25 @@
+import ddf.minim.*;
+import ddf.minim.ugens.*;
+
 class Audio {
-  Synth synth;
+  Minim minim;
+  AudioOutput output;
   
   Audio(Object main) {
-    synth = new Synth(main);
+    minim = new Minim(main);
+    output = minim.getLineOut();
   }
 
-  Synth getSynth() {
-    return synth;
+  AudioInstrument createInstrument() {
+    return new AudioInstrument(output);
+  }
+
+  void playInstrument(float freq, float amp, AudioInstrument instr) {
+    instr.osc.setFrequency(freq);
+    instr.osc.setAmplitude(amp);
+    output.pauseNotes();
+    output.playNote(0, amp, instr);
+    output.resumeNotes();
   }
 
   void collision(Contact c, ContactImpulse ci) {
@@ -21,7 +34,7 @@ class Audio {
         float rotation = abs(body.getAngularVelocity());
         float amp = constrain(rotation, 0, 0.5);
 
-        synth.play(freq, 0.5, textBox.instr);
+        playInstrument(freq, 0.5, textBox.instr);
       }
     }
   }
