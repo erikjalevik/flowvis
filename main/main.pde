@@ -43,7 +43,7 @@ void setup() {
 
   boxes = new ArrayList<TextBox>();
   thread = new Island(width / 2, height / 2, 200);
-  user = new UserImage(100, 100, "chilicorn_no_text-256.png");
+  user = new UserImage(300, 300, "chilicorn_no_text-256.png");
   
   //String[] fontList = PFont.list();
   //printArray(fontList);
