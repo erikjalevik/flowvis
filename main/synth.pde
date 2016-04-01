@@ -8,17 +8,19 @@ class Synth {
   class SynthInstrument implements Instrument {
     Oscil osc;
     ADSR adsr;
+    Delay delay;
 
     SynthInstrument(float freq, float amp) {
       osc = new Oscil(freq, amp, Waves.TRIANGLE);
       adsr = new ADSR(amp, 0.001, 0.2, 0.001, 0.001);
+      delay = new Delay(0.6, 0.4, true, true);
   
       osc.patch(adsr);
     }
 
     void noteOn(float duration) {
       adsr.noteOn();
-      adsr.patch(out);
+      adsr.patch(delay).patch(out);
     }
 
     void noteOff() {

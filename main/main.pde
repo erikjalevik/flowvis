@@ -26,7 +26,7 @@ int counter = 0;
 
 color backgroundColor = #000000;
 
-Synth synth;
+Audio audio;
 
 void setup() {
   size(800, 600);
@@ -45,7 +45,7 @@ void setup() {
   //String[] fontList = PFont.list();
   //printArray(fontList);
   
-  synth = new Synth(this);
+  audio = new Audio(this);
   
   initWebsocket(this);
 }
@@ -84,14 +84,7 @@ void beginContact(Contact c) {}
 void endContact(Contact c) {}
 
 void postSolve(Contact c, ContactImpulse ci) {
-  float impulse = constrain(ci.normalImpulses[0], 0, 50);
-  float freq = impulse * 10;
-  if (freq > 40 && freq < 1600) {
-    Body body = c.getFixtureA().getBody();
-    float rotation = abs(body.getAngularVelocity());
-    float amp = constrain(rotation, 0, 0.5);
-    synth.play(freq, amp);
-  }
+  audio.collision(c, ci);
 }
  
 void webSocketEvent(String msg){
