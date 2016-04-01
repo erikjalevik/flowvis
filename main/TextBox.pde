@@ -20,6 +20,17 @@ class TextBox  {
 
   // Constructor
   TextBox(String _text, float x, float y) {
+    TextBoxSetup(_text, x, y);
+  }
+
+  // Overload constructor
+  TextBox(String _text, float x, float y, color bColor, color wColor) {
+    boxColor = bColor;
+    wordColor = wColor;
+    TextBoxSetup(_text, x, y);
+  }
+
+  void TextBoxSetup(String _text, float x, float y) {
     text = _text;
   
     font = createFont("SharpSansNo1-Bold", 20, true);
@@ -34,7 +45,7 @@ class TextBox  {
     // Create an instrument for box
     instr = audio.createInstrument();
 
-    body.setUserData(this);
+    body.setUserData(this);  
   }
 
   // This function adds the rectangle to the box2d world
@@ -99,7 +110,7 @@ class TextBox  {
     
     fill(boxColor, alpha);
     alpha = alpha * fadeMultiplier;
-    stroke(#400000, alpha);
+    stroke(#000000, alpha);
     rect(0, 0, w, h);
 
     textAlign(CENTER);

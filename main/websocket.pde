@@ -37,6 +37,12 @@ class Websocket {
       user = new UserImage(random(150,650), random(150,450), avatar);
       users.put(avatar, user);
     }
+    
+    color avgColor = user.getAverageColor();
+    
+    ImageUtils iu = new ImageUtils();
+    
+    color cmplColor = iu.getComplementColor(avgColor);
 
     String[] words = content.split(" ");
     TextBox w;
@@ -63,7 +69,7 @@ class Websocket {
         offset.y = 0;
       }
 
-      w = new TextBox(words[i], user.x + offset.x, user.y + offset.y);
+      w = new TextBox(words[i], user.x + offset.x, user.y + offset.y, avgColor, cmplColor);
       boxes.add(w);
 
       spawnCounter = (spawnCounter + 1) % 4;

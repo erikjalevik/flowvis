@@ -29,6 +29,22 @@ class UserImage {
     makeBody(new Vec2(x, y));
   }
 
+  // Stolen from https://forum.processing.org/one/topic/getting-average-pixel-color-value-from-a-pimage-that-is-constantly-changing.html
+  color getAverageColor() {
+    img.loadPixels();
+    int r = 0, g = 0, b = 0;
+    for (int i=0; i<img.pixels.length; i++) {
+      color c = img.pixels[i];
+      r += c>>16&0xFF;
+      g += c>>8&0xFF;
+      b += c&0xFF;
+    }
+    r /= img.pixels.length;
+    g /= img.pixels.length;
+    b /= img.pixels.length;
+    return color(r, g, b);
+  }
+
   void makeBody(Vec2 center) {
     // Define the body and make it from the shape
     BodyDef bd = new BodyDef();
@@ -81,4 +97,19 @@ class UserImage {
     cacheUrl = cacheUrl.replace("?", "_");
     return cacheUrl;
   }
+}
+
+class ImageUtils {
+  color getComplementColor(color c) {
+    float red = red(c);
+    float green = green(c);
+    float blue = blue(c);
+    
+    float complementRed = 255 - red;
+    float complementGreen = 255 - green;
+    float complementBlue = 255 - blue;
+  
+    color complement = color(complementRed, complementGreen, complementBlue);
+    return complement; 
+  } 
 }
