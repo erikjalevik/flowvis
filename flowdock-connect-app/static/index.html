@@ -13,14 +13,14 @@
       var WEBSOCKET = new WebSocket('ws://localhost:8001');
 
       function sendMessage(WEBSOCKET, message, users) {
-        var nick = users.filter(function(user, args) {
+        var author = users.filter(function(user, args) {
           return String(user.id) === String(message.user)
         }).map(function(user) {
-          return user.nick;
+          return { "nick": user.nick, "avatar": user.avatar };
         })[0];
 
         // Message does not include the nickname, let's add it
-        message.nick = nick;
+        message.author = author;
 
         console.log('message', message);
 
