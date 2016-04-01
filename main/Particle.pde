@@ -49,13 +49,6 @@ class Particle {
   
   // Is the particle ready for deletion?
   boolean done() {
-    // Let's find the screen position of the particle
-    Vec2 pos = box2d.getBodyPixelCoord(body);
-    // Is it off the bottom of the screen?
-    if (pos.y > height+r*2) {
-      killBody();
-      return true;
-    }
     return false;
   }
 
