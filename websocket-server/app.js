@@ -1,16 +1,26 @@
 var ws = require("nodejs-websocket")
 var _ = require('lodash');
 
+var global_counter = 0;
+var all_active_connections = {};
+
 // Scream server example: "hi" -> "HI!!!"
 var server = ws.createServer(function (conn) {
 	console.log("New connection")
+
+	var id = global_counter++;
+  all_active_connections[id] = conn;
+	conn.id = id;
+
 	conn.on("text", function (str) {
 
     var message = filterMessage(JSON.parse(str));
 
     console.log("Received: " + JSON.stringify(message));
-    conn.sendText(JSON.stringify(message));
 
+		for (conn in all_active_connections) {
+			all_active_connections[conn].sendText(JSON.stringify(message));
+		}
 	})
 	conn.on("close", function (code, reason) {
 		console.log("Connection closed")
