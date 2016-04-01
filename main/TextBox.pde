@@ -13,6 +13,8 @@ class TextBox  {
   color boxColor = #800000;
   color wordColor = #E00000;
 
+  SynthInstrument instr;
+
   // Constructor
   TextBox(String _text, float x, float y) {
     text = _text;
@@ -24,12 +26,16 @@ class TextBox  {
     h = textAscent() + textDescent() + (2 * margin);
 
     // Add the box to the box2d world
-    makeBody(new Vec2(x, y), w, h);
-    
+    Body body = makeBody(new Vec2(x, y), w, h);
+
+    // Create an instrument for box
+    instr = new SynthInstrument(audio.getSynth());
+
+    body.setUserData(this);
   }
 
   // This function adds the rectangle to the box2d world
-  void makeBody(Vec2 center, float w_, float h_) {
+  Body makeBody(Vec2 center, float w_, float h_) {
 
     // Define a polygon (this is what we use for a rectangle)
     PolygonShape sd = new PolygonShape();
@@ -57,6 +63,8 @@ class TextBox  {
     // Give it some initial random velocity
     body.setLinearVelocity(new Vec2(random(-6, 6), random(-5, 5)));
     body.setAngularVelocity(random(-9, 9));
+
+    return body;
   }
 
   // This function removes the particle from the box2d world

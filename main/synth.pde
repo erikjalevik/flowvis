@@ -3,40 +3,49 @@ import ddf.minim.ugens.*;
 
 class Synth {
   Minim minim;
-  AudioOutput out;
-
-  class SynthInstrument implements Instrument {
-    Oscil osc;
-    ADSR adsr;
-    Delay delay;
-
-    SynthInstrument(float freq, float amp) {
-      osc = new Oscil(freq, amp, Waves.TRIANGLE);
-      adsr = new ADSR(amp, 0.001, 0.2, 0.001, 0.001);
-      delay = new Delay(0.6, 0.4, true, true);
-  
-      osc.patch(adsr);
-    }
-
-    void noteOn(float duration) {
-      adsr.noteOn();
-      adsr.patch(delay).patch(out);
-    }
-
-    void noteOff() {
-      adsr.unpatchAfterRelease(out);
-      adsr.noteOff();
-    }
-  }
+  AudioOutput output;
 
   Synth(Object main) {
     minim = new Minim(main);
-    out = minim.getLineOut();
+    output = minim.getLineOut();
   }
 
-  void play(float freq, float amp) {
-    out.pauseNotes();
-    out.playNote(0, 1.0, new SynthInstrument(freq, amp));
-    out.resumeNotes();
+  AudioOutput getOutput() {
+    return output;
+  }
+
+  void play(float freq, float amp, SynthInstrument instr) {
+    instr.osc.setFrequency(freq);
+    instr.osc.setAmplitude(amp);
+    output.pauseNotes();
+    output.playNote(0, amp, instr);
+    output.resumeNotes();
+  }
+}
+
+class SynthInstrument implements Instrument {
+  Oscil osc;
+  ADSR adsr;
+  Delay delay;
+  Synth synth;
+
+  SynthInstrument(Synth syn) {
+    int defaultFreq = 440;
+    int defaultAmp = 1;
+
+    osc = new Oscil(defaultFreq, defaultAmp, Waves.TRIANGLE);
+    adsr = new ADSR(defaultAmp, 0.001, 0.2, 0.001, 0.001);
+    delay = new Delay(0.6, 0.4, true, true);
+    synth = syn;
+    osc.patch(adsr);
+    adsr.patch(delay).patch(synth.getOutput());
+  }
+
+  void noteOn(float duration) {
+    adsr.noteOn();
+  }
+
+  void noteOff() {
+    adsr.noteOff();
   }
 }
