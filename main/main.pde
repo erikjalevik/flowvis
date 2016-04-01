@@ -19,6 +19,7 @@ Box2DProcessing box2d;
 
 // A list for all of our rectangles
 ArrayList<TextBox> boxes;
+Island thread;
 
 String[] words = { "hey", "here's", "some", "words", "to", "test", "with" };  
 String incomingWord = "";
@@ -40,10 +41,12 @@ void setup() {
   // Initialize box2d physics and create the world
   box2d = new Box2DProcessing(this);
   box2d.createWorld();
-  box2d.setGravity(0, -0.05); // very slight downward gravity
+  box2d.setGravity(0, 0); //-0.05); // very slight downward gravity
 
   boxes = new ArrayList<TextBox>();
 
+  thread = new Island(width / 2, height / 2, 200);
+  
   //String[] fontList = PFont.list();
   //printArray(fontList);
   
@@ -62,6 +65,8 @@ void draw() {
   background(backgroundColor);
   
   box2d.step();
+  
+  thread.display();
 
   if (!incomingWord.isEmpty()) {
     TextBox b = new TextBox(incomingWord, mouseX, mouseY);

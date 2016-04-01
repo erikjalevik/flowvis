@@ -55,8 +55,8 @@ class TextBox  {
     //body.setMassFromShapes();
 
     // Give it some initial random velocity
-    body.setLinearVelocity(new Vec2(random(-3, 3), random(0.5, 3)));
-    body.setAngularVelocity(random(-5, 5));
+    body.setLinearVelocity(new Vec2(random(-6, 6), random(-5, 5)));
+    body.setAngularVelocity(random(-9, 9));
   }
 
   // This function removes the particle from the box2d world
