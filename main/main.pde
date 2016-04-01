@@ -93,7 +93,7 @@ void draw() {
 
   // Every 5 seconds I send a message to the server through the sendMessage method
   if(millis()>now+5000){
-    wsc.sendMessage("Client message");
+    //wsc.sendMessage("Client message");
     now=millis();
   }
   
