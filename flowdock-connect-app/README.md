@@ -1,7 +1,7 @@
 # Flowdock connect app
 This app is based on [Flowdock OAuth Demo](https://github.com/flowdock/flowdock-oauth-demo).
 
-It has some modifications in the views.
+It has some modifications in the view, but Ruby code is left untouched.
 
 See section **Setup** for instructions to run this app.
 
@@ -12,7 +12,7 @@ This repo contains a demo application that uses [Flowdock API](https://flowdock.
 via OAuth 2.0. The client-side part utilises [Flowdock Sreaming API](https://flowdock.com/api/streaming).
 
 The app fetches latest chat messages for the selected flow in Flowdock and
-streams new messages. Messages can also be sent to the flow.
+streams new messages.
 
 [App.rb](https://github.com/flowdock/flowdock-oauth-demo/blob/master/app.rb)
 contains Sinatra app that is the redirect URL endpoint for OAuth.
@@ -32,7 +32,7 @@ You need to have bundler gem installed: `sudo gem install bundle` and the Ruby v
  - `bundle install`
  - `foreman start`
 
- The Ruby application is used to sever the client-side JS and as redirect
+ The Ruby application is used to serve the client-side JS and as redirect
  endpoint for OAuth.
 
  Flowdock OAuth credentials can be created at
@@ -41,3 +41,5 @@ You need to have bundler gem installed: `sudo gem install bundle` and the Ruby v
 ## Connecting
 
 Open `localhost:5000` in the browser and authenticate your Flowdock user account to use the app. You need to have a websocket in `localhost:8001` running. When you select the flow, incoming stream of messages are sent to the websocket.
+
+Access token is saved in local storage so that reauthentication shouldn't be necessary unless it expires.
