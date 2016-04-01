@@ -46,12 +46,15 @@ class Websocket {
       offset.x = -(user.w / 2);
       offset.y = 0;
     }
-    spawnCounter = (spawnCounter + 1) % 4;
-    //TextBox n = new TextBox(nick, x, y);
-    TextBox c = new TextBox(content, user.x + offset.x, user.y + offset.y);
 
-    //boxes.add(n);
-    boxes.add(c);
+    String[] words = content.split(" ");
+    TextBox w;
+    for(int i=0; i < words.length; i++) {
+      w = new TextBox(words[i], user.x + offset.x, user.y + offset.y);
+      boxes.add(w);
+      spawnCounter = (spawnCounter + 1) % 4;
+    }
+
     wsMessage = false;
   }
 
