@@ -21,8 +21,7 @@ Box2DProcessing box2d;
 ArrayList<TextBox> boxes;
 
 String[] words = { "hey", "here's", "some", "words", "to", "test", "with" };  
-int[] times = { 1, 2, 4, 8, 9, 12, 15 };
-int speed = 100;
+String incomingWord = "";
 int counter = 0;
 
 color backgroundColor = #000000;
@@ -64,11 +63,10 @@ void draw() {
   
   box2d.step();
 
-  if (mousePressed) {
-    String w = words[counter];
-    counter = (counter + 1) % words.length;
-    TextBox b = new TextBox(w, mouseX, mouseY);
+  if (!incomingWord.isEmpty()) {
+    TextBox b = new TextBox(incomingWord, mouseX, mouseY);
     boxes.add(b);
+    incomingWord = "";
   }
 
   for (TextBox b: boxes) {
@@ -100,6 +98,9 @@ void draw() {
 }
 
 void mousePressed() {
+  incomingWord = words[counter];
+  counter = (counter + 1) % words.length;
+
   out.playNote(0, 1.0, new Synth(880, 1.0));
 }
 
