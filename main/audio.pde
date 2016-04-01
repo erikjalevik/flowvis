@@ -4,6 +4,12 @@ import ddf.minim.ugens.*;
 class Audio {
   Minim minim;
   AudioOutput output;
+  String notes[] = {
+    "A1", "E2", "A2", "E3", "A3", "C4", "D4", "E4", "G4", "A4"
+  };
+  String specialNotes[] = {
+    "F3", "F4", "C#3", "C#4"
+  };
   
   Audio(Object main) {
     minim = new Minim(main);
@@ -14,11 +20,23 @@ class Audio {
     return new AudioInstrument(output);
   }
 
-  void playInstrument(float freq, float amp, AudioInstrument instr) {
-    instr.osc.setFrequency(freq);
-    instr.osc.setAmplitude(amp);
+  String randomizeNote() {
+    // Randomize special notes every now and then
+    if (random(0, 1) > 0.9) {
+      int index = (int)random(0, specialNotes.length);
+      return specialNotes[index];
+    } else {
+      int index = (int)random(0, notes.length);
+      return notes[index];
+    }
+  }
+
+  void playInstrument(float impulse, float rotation, AudioInstrument instr) {
+    instr.osc.setFrequency(Frequency.ofPitch(randomizeNote()).asHz());
+    instr.osc.setAmplitude(impulse);
+    instr.pan.setPan(rotation);
     output.pauseNotes();
-    output.playNote(0, amp, instr);
+    output.playNote(0, 0.5, instr);
     output.resumeNotes();
   }
 
@@ -26,15 +44,14 @@ class Audio {
     if (isBoxCollision(c)) {
       TextBox textBox = (TextBox)c.getFixtureA().getBody().getUserData();
 
-      float impulse = constrain(ci.normalImpulses[0], 0, 50);
-      float freq = impulse * 10;
+      float impulse = ci.normalImpulses[0];
 
-      if (freq > 40 && freq < 1600) {
+      if (impulse > 10) {
         Body body = c.getFixtureA().getBody();
-        float rotation = abs(body.getAngularVelocity());
-        float amp = constrain(rotation, 0, 0.5);
+        float rotation = body.getAngularVelocity();
+        float pan = constrain(rotation, -1, 1);
 
-        playInstrument(freq, 0.5, textBox.instr);
+        playInstrument(0.5, pan, textBox.instr);
       }
     }
   }
