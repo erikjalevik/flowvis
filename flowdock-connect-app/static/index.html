@@ -7,27 +7,12 @@
       jQuery.noConflict();
       var $ = jQuery;
       var token = null;
-      var apiUrl = "https://api.flowdock.com/";
-      var streamUrl = "https://stream.flowdock.com/";
-      var flowId = "rally-software/flowdock";
-      var webSocket = new WebSocket('ws://localhost:8001');
+      var API_URL = "https://api.flowdock.com/";
+      var STREAM_URL = "https://stream.flowdock.com/";
+      var FLOW_ID = "78e9b3f0-d566-4810-9f01-9bc32b5d5cee"; // TEMP test flow
+      var WEBSOCKET = new WebSocket('ws://localhost:8001');
 
-      function render(message, users) {
-        var nick = users.filter(function(user, args) {
-          return String(user.id) === String(message.user)
-        }).map(function(user) {
-          return user.nick;
-        })[0];
-        return $("<li>").append(
-          $("<p>").append(
-            $("<strong>").text(nick),
-            $("<br>"),
-            (message.content.text || message.content)
-          )
-        )
-      }
-
-      function sendMessage(webSocket, message, users) {
+      function sendMessage(WEBSOCKET, message, users) {
         var nick = users.filter(function(user, args) {
           return String(user.id) === String(message.user)
         }).map(function(user) {
@@ -42,46 +27,46 @@
         var messageStr = JSON.stringify(message);
 
         // Send the whole thing to the websocket
-        webSocket.send(messageStr);
+        WEBSOCKET.send(messageStr);
       }
 
-      function app(flowUrl, flowId) {
-        $("#send").submit(function(event) {
-          var input = $(event.target).find("input[type=text]");
-          var text = input.val();
-          input.val("");
-          event.preventDefault();
-          $.post(flowUrl + "/messages?access_token=" + token, {
-            event: "message",
-            content: text
-          });
-        });
+      function app() {
+        // We need these later
+        var users, messages, flowUrl;
 
-        var userRequest = $.getJSON(flowUrl + "/users?access_token=" + token);
-        messageRequest = $.getJSON(flowUrl + "/messages?event=message,comment&access_token=" + token);
+        // Get the flow url by using the FLOW_ID
+        $.getJSON(API_URL + "flows/find?id=" + FLOW_ID + "&access_token=" + token)
+          .then(function(flowUrlResponse) {
+            flowUrl = flowUrlResponse.url;
 
-        $.when(userRequest, messageRequest).done(function(userResponse, messageResponse) {
-          var messages = messageResponse[0];
-          var users = userResponse[0];
-          $.fn.prepend.call($("#messages"), messages.reverse().map(function(message) {
-            return sendMessage(webSocket, message, users);
-          }));
+            // Get users on the flow
+            return $.getJSON(flowUrl + "/users?access_token=" + token);
+          })
+          .then(function(userRes) {
+            users = userRes;
 
-          var stream = new EventSource(streamUrl + "flows?filter=" + flowId + "&access_token=" + token);
-          stream.addEventListener('message', function(event) {
-            var message = JSON.parse(event.data);
-            if (message.event == 'message' || message.event == 'comment') {
-              sendMessage(webSocket, message, users);
-            }
-          });
+            // Get the messages in the flow (defaults to 30, limit can be between 0 and 100)
+            return $.getJSON(flowUrl + "/messages?event=message,comment&limit=100&access_token=" + token);
+          })
+          .then(function(messageRes) {
+
+            messages = messageRes;
+
+            // Send past messages to the websocket in reverse order
+            messages.reverse().map(function(message) {
+              return sendMessage(WEBSOCKET, message, users);
+            });
+
+            // Open the stream and send messages to websocket when new messages are posted
+            var stream = new EventSource(STREAM_URL + "flows?filter=" + FLOW_ID + "&access_token=" + token);
+            stream.addEventListener('message', function(event) {
+              var message = JSON.parse(event.data);
+              if (message.event == 'message' || message.event == 'comment') {
+                sendMessage(WEBSOCKET, message, users);
+              }
+            });
         });
       };
-
-      function renderFlows(flows) {
-        return flows.map(function(flow) {
-          return $("<option>").attr({value: flow.url}).data("id", flow.id).text(flow.name);
-        })
-      }
 
       $(function() {
         $("#authorize").click(function() {
@@ -89,18 +74,9 @@
           function receiveMessage(event) {
             popup.close();
             token = event.data;
+            localStorage.setItem('access_token', token);
 
-            $.getJSON(apiUrl + "flows?access_token=" + token, function(flows) {
-              $("#flows").show();
-              $.fn.append.call($("#flows"), renderFlows(flows));
-              $("#flows").one("change", function(event) {
-                var id = $(event.target).find(":selected").data("id");
-                app($(event.target).val(), id);
-                $("#app").show();
-                $("#flows").hide();
-              });
-            });
-
+            app();
             $("#authorize").hide();
           };
           window.addEventListener("message", receiveMessage, false);
