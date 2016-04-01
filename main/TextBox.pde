@@ -61,7 +61,7 @@ class TextBox  {
     //body.setMassFromShapes();
 
     // Give it some initial random velocity
-    body.setLinearVelocity(new Vec2(random(-6, 6), random(-5, 5)));
+    body.setLinearVelocity(new Vec2(random(-16, 16), random(-15, 15)));
     body.setAngularVelocity(random(-9, 9));
 
     return body;

@@ -4,6 +4,7 @@ WebsocketClient wsc;
 Websocket ws;
 JSONObject response;
 boolean wsMessage;
+int spawnCounter = 0;
 
 // Message properties
 String nick;
@@ -29,13 +30,27 @@ class Websocket {
   }
 
   void displayMessage() {
-    float x = 400;
-    float y = 300;
-    TextBox n = new TextBox(nick, x, y);
-    TextBox c = new TextBox(content, x, y);
     user = new UserImage(300, 300, avatar);
 
-    boxes.add(n);
+    Vec2 offset = new Vec2();
+    if (spawnCounter == 0) {
+      offset.x = 0;
+      offset.y = -(user.h / 2);
+    } else if (spawnCounter == 1) {
+      offset.x = user.w / 2;
+      offset.y = 0;
+    } else if (spawnCounter == 2) {
+      offset.x = 0;
+      offset.y = user.h / 2;
+    } else if (spawnCounter == 3) {
+      offset.x = -(user.w / 2);
+      offset.y = 0;
+    }
+    spawnCounter = (spawnCounter + 1) % 4;
+    //TextBox n = new TextBox(nick, x, y);
+    TextBox c = new TextBox(content, user.x + offset.x, user.y + offset.y);
+
+    //boxes.add(n);
     boxes.add(c);
     wsMessage = false;
   }

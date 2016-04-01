@@ -5,10 +5,14 @@ class UserImage {
   Body body;
   float w = 32;
   float h = 32;
+  float x;
+  float y;
   PImage img;
   
   // Constructor
-  UserImage(float x, float y, String imageUrl) {
+  UserImage(float _x, float _y, String imageUrl) {
+    x = _x;
+    y = _y;
     img = loadImage(imageUrl, "jpg");
     
     // Add the box to the box2d world
