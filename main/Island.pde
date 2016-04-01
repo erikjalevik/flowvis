@@ -10,6 +10,8 @@ class Island {
   ArrayList<Particle> particles;
   Particle centerParticle;
 
+  color islandColor = color(20, 28, 38, 200);
+
   // Chain constructor
   Island(int xPos, int yPos, float _radius) {
 
@@ -79,9 +81,14 @@ class Island {
 
   // Draw the island
   void display() {
+    beginShape();
+    fill(islandColor);
+    noStroke();
     for (Particle p: particles) {
-      p.display();
+      Vec2 pos = box2d.getBodyPixelCoord(p.body);
+      vertex(pos.x, pos.y);
     }
+    endShape(CLOSE);
   }
 
 }
