@@ -1,5 +1,6 @@
 import ddf.minim.*;
 import ddf.minim.ugens.*;
+import ddf.minim.effects.*;
 
 class Audio {
   Minim minim;
@@ -14,6 +15,17 @@ class Audio {
   Audio(Object main) {
     minim = new Minim(main);
     output = minim.getLineOut();
+
+    // Create a background drone
+    Oscil drone = new Oscil(Frequency.ofPitch("A1").asHz(), 0.05, Waves.SAW);
+    IIRFilter filter = new LowPassSP(1000, output.sampleRate());
+    Oscil lfo = new Oscil(0.25, 400, Waves.SINE);
+    lfo.offset.setLastValue(500);
+    lfo.patch(filter.cutoff);
+    drone.patch(filter).patch(output);
+
+    Oscil tri = new Oscil(Frequency.ofPitch("A2").asHz() - 0.25, 0.025, Waves.TRIANGLE);
+    tri.patch(output);
   }
 
   AudioInstrument createInstrument() {
