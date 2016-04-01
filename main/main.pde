@@ -33,6 +33,7 @@ boolean newEllipse;
 String name;
 JSONObject response;
 
+Synth synth;
 
 void setup() {
   size(800, 600);
@@ -48,7 +49,7 @@ void setup() {
   //String[] fontList = PFont.list();
   //printArray(fontList);
   
-  initSynth(this);
+  synth = new Synth(this);
   
   newEllipse = true;
   name = "";
@@ -93,14 +94,16 @@ void draw() {
 
   // Every 5 seconds I send a message to the server through the sendMessage method
   if(millis()>now+5000){
-    wsc.sendMessage("Client message");
+    if (wsc != null) {
+      wsc.sendMessage("Client message");
+    }
     now=millis();
   }
   
 }
 
 void mousePressed() {
-  out.playNote(0, 1.0, new Synth(880, 1.0));
+  synth.play(880, 1.0);
 }
 
 void newMessage(String name) {
