@@ -7,6 +7,7 @@ boolean wsMessage;
 
 // Message properties
 String nick;
+String avatar;
 String content;
 String tags;
 String thread_id;
@@ -28,10 +29,12 @@ class Websocket {
   }
 
   void displayMessage() {
-    float x = random(width);
-    float y = random(height);
+    float x = 400;
+    float y = 300;
     TextBox n = new TextBox(nick, x, y);
     TextBox c = new TextBox(content, x, y);
+    user = new UserImage(300, 300, avatar);
+
     boxes.add(n);
     boxes.add(c);
     wsMessage = false;
@@ -40,6 +43,7 @@ class Websocket {
   void newWebSocketMsg(String msg){
     response = parseJSONObject(msg);
     nick = response.getString("nick");
+    avatar = response.getString("avatar");
     content = response.getString("content");
     println(nick + " says " + content);
     wsMessage = true;

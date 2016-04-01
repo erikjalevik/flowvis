@@ -9,7 +9,7 @@ class UserImage {
   
   // Constructor
   UserImage(float x, float y, String imageUrl) {
-    img = loadImage(imageUrl);
+    img = loadImage(imageUrl, "jpg");
     
     // Add the box to the box2d world
     makeBody(new Vec2(x, y));

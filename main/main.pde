@@ -26,12 +26,15 @@ String incomingWord = "";
 int counter = 0;
 
 color backgroundColor = #000000;
+PImage bg;
 
 Audio audio;
 
 void setup() {
   size(800, 600);
   frameRate(60);
+  bg = loadImage("galaxy.jpg");
+
 
   // Initialize box2d physics and create the world
   box2d = new Box2DProcessing(this);
@@ -54,7 +57,7 @@ void setup() {
 }
 
 void draw() {
-  background(backgroundColor);
+  background(bg);
 
   box2d.step();
 
