@@ -3,11 +3,8 @@
  * 
  */
  
-Synth synth;
-
 void setup() {
   initSynth(this);
-  synth = new Synth();
 }
 
 void draw() {
@@ -15,5 +12,5 @@ void draw() {
 }
 
 void mousePressed() {
-  synth.play(880, 1.0);
+  out.playNote(0, 1.0, new Synth(880, 1.0));
 }

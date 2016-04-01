@@ -2,27 +2,31 @@ import ddf.minim.*;
 import ddf.minim.ugens.*;
 
 static Minim minim;
-static AudioOutput output;
+static AudioOutput out;
 
 static void initSynth(Object main) {
   minim = new Minim(main);
-  output = minim.getLineOut();
+  out = minim.getLineOut();
 }
 
-class Synth {
+class Synth implements Instrument {
   Oscil osc;
   ADSR adsr;
   
-  Synth() {
-    osc = new Oscil(440, 1.0, Waves.SINE);
-    adsr = new ADSR(1.0, 0.01, 0.2);
+  Synth(float freq, float amp) {
+    osc = new Oscil(freq, amp, Waves.TRIANGLE);
+    adsr = new ADSR(amp, 0.001, 0.2, 0.001, 0.001);
 
-    osc.patch(adsr).patch(output);
+    osc.patch(adsr);
   }
   
-  void play(float freq, float amp) {
-    osc.setFrequency(freq);
-    osc.setAmplitude(amp);
+  void noteOn(float duration) {
     adsr.noteOn();
+    adsr.patch(out);
+  }
+
+  void noteOff() {
+    adsr.unpatchAfterRelease(out);
+    adsr.noteOff();
   }
 }
