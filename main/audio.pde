@@ -3,6 +3,8 @@ import ddf.minim.ugens.*;
 import ddf.minim.effects.*;
 
 class Audio {
+  final int COLLISION_SOUND_DELAY = 50;
+
   Minim minim;
   AudioOutput output;
   String notes[] = {
@@ -11,7 +13,8 @@ class Audio {
   String specialNotes[] = {
     "F3", "F4", "C#3", "C#4"
   };
-  
+  int lastCollision = millis();
+
   Audio(Object main) {
     minim = new Minim(main);
     output = minim.getLineOut();
@@ -43,29 +46,38 @@ class Audio {
     }
   }
 
-  void playInstrument(float impulse, float rotation, AudioInstrument instr) {
+  void collision(Contact c, ContactImpulse ci) {
+    if (millis() - lastCollision < COLLISION_SOUND_DELAY) {
+      return;
+    }
+
+    if (!isBoxCollision(c)) {
+      return;
+    }
+
+    float impulse = ci.normalImpulses[0];
+    if (impulse > 10) {
+      TextBox textBoxA = (TextBox)c.getFixtureA().getBody().getUserData();
+      TextBox textBoxB = (TextBox)c.getFixtureB().getBody().getUserData();
+
+      float rotation = c.getFixtureA().getBody().getAngularVelocity();
+      float pan = constrain(rotation, -1, 1);
+      float alpha = (textBoxA.alpha + textBoxB.alpha) / 2;
+      float amp = alpha / 255 * 0.7;
+
+      playInstrument(amp, pan, textBoxA.instr);
+
+      lastCollision = millis();
+    }
+  }
+
+  void playInstrument(float amp, float pan, AudioInstrument instr) {
     instr.osc.setFrequency(Frequency.ofPitch(randomizeNote()).asHz());
-    instr.osc.setAmplitude(impulse);
-    instr.pan.setPan(rotation);
+    instr.osc.setAmplitude(amp);
+    instr.pan.setPan(pan);
     output.pauseNotes();
     output.playNote(0, 0.5, instr);
     output.resumeNotes();
-  }
-
-  void collision(Contact c, ContactImpulse ci) {
-    if (isBoxCollision(c)) {
-      TextBox textBox = (TextBox)c.getFixtureA().getBody().getUserData();
-
-      float impulse = ci.normalImpulses[0];
-
-      if (impulse > 10) {
-        Body body = c.getFixtureA().getBody();
-        float rotation = body.getAngularVelocity();
-        float pan = constrain(rotation, -1, 1);
-
-        playInstrument(0.5, pan, textBox.instr);
-      }
-    }
   }
 
   boolean isBoxCollision(Contact c) {
