@@ -10,7 +10,7 @@ class Island {
   ArrayList<Particle> particles;
   Particle centerParticle;
 
-  color islandColor = color(20, 28, 38, 200);
+  color islandColor = color(33, 39, 52, 220);
 
   // Chain constructor
   Island(int xPos, int yPos, float _radius) {
