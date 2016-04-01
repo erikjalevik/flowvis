@@ -13,7 +13,16 @@ class UserImage {
   UserImage(float _x, float _y, String imageUrl) {
     x = _x;
     y = _y;
-    img = loadImage(imageUrl, "jpg");
+
+    String cacheUrl = cacheUrlForUrl(imageUrl);
+    File f = new File(dataPath(cacheUrl));
+    if (f.exists()) {
+      img = loadImage(cacheUrl, "jpg");
+    }
+    else {
+      img = loadImage(imageUrl, "jpg");
+      img.save(cacheUrlForUrl(imageUrl));
+    }
     
     // Add the box to the box2d world
     makeBody(new Vec2(x, y));
@@ -64,4 +73,11 @@ class UserImage {
     popMatrix();
   }
 
+  String cacheUrlForUrl(String imageUrl) {
+    String cacheUrl = imageUrl.replace("\\", "_");
+    cacheUrl = cacheUrl.replace(":", "_");
+    cacheUrl = cacheUrl.replace("/", "_");
+    cacheUrl = cacheUrl.replace("?", "_");
+    return cacheUrl;
+  }
 }
