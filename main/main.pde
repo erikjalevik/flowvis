@@ -11,8 +11,7 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.*;
-
-import websockets.*;
+import org.jbox2d.callbacks.ContactImpulse;
 
 // A reference to our box2d world
 Box2DProcessing box2d;
@@ -27,12 +26,7 @@ int counter = 0;
 
 color backgroundColor = #000000;
 
-WebsocketClient wsc;
-int now;
-boolean newEllipse;
-String name;
-JSONObject response;
-
+Audio audio;
 
 void setup() {
   size(800, 600);
@@ -43,6 +37,9 @@ void setup() {
   box2d.createWorld();
   box2d.setGravity(0, 0); //-0.05); // very slight downward gravity
 
+  // Turn on collision listening!
+  box2d.listenForCollisions();
+
   boxes = new ArrayList<TextBox>();
 
   thread = new Island(width / 2, height / 2, 200);
@@ -50,15 +47,9 @@ void setup() {
   //String[] fontList = PFont.list();
   //printArray(fontList);
   
-  initSynth(this);
+  audio = new Audio(this);
   
-  newEllipse = true;
-  name = "";
-
-  //Here I initiate the websocket connection by connecting to "ws://localhost:8025/john", which is the uri of the server.
-  //this refers to the Processing sketch it self (you should always write "this").
-  //wsc = new WebsocketClient(this, "ws://localhost:8025/john");
-  now = millis();
+  initWebsocket(this);
 }
 
 void draw() {
@@ -73,6 +64,10 @@ void draw() {
     boxes.add(b);
     incomingWord = "";
   }
+  
+  if(wsMessage){
+    ws.displayMessage();
+  }
 
   for (TextBox b: boxes) {
     b.display();
@@ -85,41 +80,21 @@ void draw() {
       boxes.remove(i);
     }
   }
-  
-  
-  // Here I draw a new ellipse if newEllipse is true
-  if(newEllipse){
-    //ellipse(random(width),random(height),10,10);
-    newMessage(name);
-    newEllipse=false;
-  }
-
-  // Every 5 seconds I send a message to the server through the sendMessage method
-  if(millis()>now+5000){
-    //wsc.sendMessage("Client message");
-    now=millis();
-  }
-  
 }
 
 void mousePressed() {
   incomingWord = words[counter];
   counter = (counter + 1) % words.length;
-
-  out.playNote(0, 1.0, new Synth(880, 1.0));
 }
 
-void newMessage(String name) {
-  float x = random(width);
-  float y = random(height);
-  ellipse(x,y,10,10);
-  text(name, x, y-10);
-}
+void beginContact(Contact c) {}
 
-//This is an event like onMouseClicked. If you chose to use it, it will be executed whenever the server sends a message 
+void endContact(Contact c) {}
+
+void postSolve(Contact c, ContactImpulse ci) {
+  audio.collision(c, ci);
+}
+ 
 void webSocketEvent(String msg){
- response = parseJSONObject(msg);
- name = response.getString("nick");
- println("Nick: " + name);
- newEllipse=true;
+  ws.newWebSocketMsg(msg);
 } 
