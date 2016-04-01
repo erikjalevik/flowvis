@@ -55,7 +55,7 @@ void setup() {
 
   //Here I initiate the websocket connection by connecting to "ws://localhost:8025/john", which is the uri of the server.
   //this refers to the Processing sketch it self (you should always write "this").
-  wsc = new WebsocketClient(this, "ws://localhost:8025/john");
+  //wsc = new WebsocketClient(this, "ws://localhost:8025/john");
   now = millis();
 }
 
@@ -102,3 +102,18 @@ void draw() {
 void mousePressed() {
   out.playNote(0, 1.0, new Synth(880, 1.0));
 }
+
+void newMessage(String name) {
+  float x = random(width);
+  float y = random(height);
+  ellipse(x,y,10,10);
+  text(name, x, y-10);
+}
+
+//This is an event like onMouseClicked. If you chose to use it, it will be executed whenever the server sends a message 
+void webSocketEvent(String msg){
+ response = parseJSONObject(msg);
+ name = response.getString("nick");
+ println("Nick: " + name);
+ newEllipse=true;
+} 
