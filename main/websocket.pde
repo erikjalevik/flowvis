@@ -30,7 +30,13 @@ class Websocket {
   }
 
   void displayMessage() {
-    user = new UserImage(300, 300, avatar);
+    UserImage user;
+    if(users.containsKey(avatar)) {
+      user = users.get(avatar);
+    } else {
+      user = new UserImage(random(150,650), random(150,450), avatar);
+      users.put(avatar, user);
+    }
 
     String[] words = content.split(" ");
     TextBox w;
