@@ -1,8 +1,8 @@
 /**
  * Flowvis main
- * 
+ *
  */
- 
+
 import shiffman.box2d.*;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.joints.*;
@@ -20,7 +20,7 @@ Box2DProcessing box2d;
 ArrayList<TextBox> boxes;
 Island thread;
 
-String[] words = { "hey", "here's", "some", "words", "to", "test", "with" };  
+String[] words = { "hey", "here's", "some", "words", "to", "test", "with" };
 String incomingWord = "";
 int counter = 0;
 
@@ -43,20 +43,20 @@ void setup() {
   boxes = new ArrayList<TextBox>();
 
   thread = new Island(width / 2, height / 2, 200);
-  
+
   //String[] fontList = PFont.list();
   //printArray(fontList);
-  
+
   audio = new Audio(this);
-  
+
   initWebsocket(this);
 }
 
 void draw() {
   background(backgroundColor);
-  
+
   box2d.step();
-  
+
   thread.display();
 
   if (!incomingWord.isEmpty()) {
@@ -64,7 +64,7 @@ void draw() {
     boxes.add(b);
     incomingWord = "";
   }
-  
+
   if(wsMessage){
     ws.displayMessage();
   }
@@ -94,7 +94,7 @@ void endContact(Contact c) {}
 void postSolve(Contact c, ContactImpulse ci) {
   audio.collision(c, ci);
 }
- 
+
 void webSocketEvent(String msg){
   ws.newWebSocketMsg(msg);
-} 
+}
