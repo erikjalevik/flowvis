@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>OAuth demo application</title>
+    <script src="//code.jquery.com/jquery-2.0.3.js"></script>
+    <script>
+      jQuery.noConflict();
+      var $ = jQuery;
+      var token = null;
+      var apiUrl = "https://api.flowdock.com/";
+      var streamUrl = "https://stream.flowdock.com/";
+      var flowId = "rally-software/flowdock";
+      var webSocket = new WebSocket('ws://localhost:8001');
+
+      function render(message, users) {
+        var nick = users.filter(function(user, args) {
+          return String(user.id) === String(message.user)
+        }).map(function(user) {
+          return user.nick;
+        })[0];
+        return $("<li>").append(
+          $("<p>").append(
+            $("<strong>").text(nick),
+            $("<br>"),
+            (message.content.text || message.content)
+          )
+        )
+      }
+
+      function sendMessage(webSocket, message, users) {
+        var nick = users.filter(function(user, args) {
+          return String(user.id) === String(message.user)
+        }).map(function(user) {
+          return user.nick;
+        })[0];
+
+        // Message does not include the nickname, let's add it
+        message.nick = nick;
+
+        console.log('message', message);
+
+        var messageStr = JSON.stringify(message);
+
+        // Send the whole thing to the websocket
+        webSocket.send(messageStr);
+      }
+
+      function app(flowUrl, flowId) {
+        $("#send").submit(function(event) {
+          var input = $(event.target).find("input[type=text]");
+          var text = input.val();
+          input.val("");
+          event.preventDefault();
+          $.post(flowUrl + "/messages?access_token=" + token, {
+            event: "message",
+            content: text
+          });
+        });
+
+        var userRequest = $.getJSON(flowUrl + "/users?access_token=" + token);
+        messageRequest = $.getJSON(flowUrl + "/messages?event=message,comment&access_token=" + token);
+
+        $.when(userRequest, messageRequest).done(function(userResponse, messageResponse) {
+          var messages = messageResponse[0];
+          var users = userResponse[0];
+          $.fn.prepend.call($("#messages"), messages.reverse().map(function(message) {
+            return sendMessage(webSocket, message, users);
+          }));
+
+          var stream = new EventSource(streamUrl + "flows?filter=" + flowId + "&access_token=" + token);
+          stream.addEventListener('message', function(event) {
+            var message = JSON.parse(event.data);
+            if (message.event == 'message' || message.event == 'comment') {
+              sendMessage(webSocket, message, users);
+            }
+          });
+        });
+      };
+
+      function renderFlows(flows) {
+        return flows.map(function(flow) {
+          return $("<option>").attr({value: flow.url}).data("id", flow.id).text(flow.name);
+        })
+      }
+
+      $(function() {
+        $("#authorize").click(function() {
+          var popup = window.open('/auth/flowdock');
+          function receiveMessage(event) {
+            popup.close();
+            token = event.data;
+
+            $.getJSON(apiUrl + "flows?access_token=" + token, function(flows) {
+              $("#flows").show();
+              $.fn.append.call($("#flows"), renderFlows(flows));
+              $("#flows").one("change", function(event) {
+                var id = $(event.target).find(":selected").data("id");
+                app($(event.target).val(), id);
+                $("#app").show();
+                $("#flows").hide();
+              });
+            });
+
+            $("#authorize").hide();
+          };
+          window.addEventListener("message", receiveMessage, false);
+        })
+      });
+    </script>
+  </head>
+  <body>
+    <button id="authorize">Authorize</button>
+    <div id="app" style="display:none">
+      <form id="send">
+      <input type="text" name="message" />
+      <input type="submit" value="Chat" />
+      </form>
+    </div>
+    <select style="display:none" id="flows">
+      <option disabled>Select flow</option>
+    </select>
+    <ul id="messages"></ul>
+  </body>
+</html>
