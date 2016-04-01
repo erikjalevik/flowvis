@@ -32,26 +32,34 @@ class Websocket {
   void displayMessage() {
     user = new UserImage(300, 300, avatar);
 
-    Vec2 offset = new Vec2();
-    if (spawnCounter == 0) {
-      offset.x = 0;
-      offset.y = -(user.h / 2);
-    } else if (spawnCounter == 1) {
-      offset.x = user.w / 2;
-      offset.y = 0;
-    } else if (spawnCounter == 2) {
-      offset.x = 0;
-      offset.y = user.h / 2;
-    } else if (spawnCounter == 3) {
-      offset.x = -(user.w / 2);
-      offset.y = 0;
-    }
-
     String[] words = content.split(" ");
     TextBox w;
     for(int i=0; i < words.length; i++) {
+      if (i > 8) {
+        break;
+      }
+      if (words[i].length() > 10) {
+        break;
+      }
+
+      Vec2 offset = new Vec2();
+      if (spawnCounter == 0) {
+        offset.x = 0;
+        offset.y = -(user.h / 2);
+      } else if (spawnCounter == 1) {
+        offset.x = user.w / 2;
+        offset.y = 0;
+      } else if (spawnCounter == 2) {
+        offset.x = 0;
+        offset.y = user.h / 2;
+      } else if (spawnCounter == 3) {
+        offset.x = -(user.w / 2);
+        offset.y = 0;
+      }
+
       w = new TextBox(words[i], user.x + offset.x, user.y + offset.y);
       boxes.add(w);
+
       spawnCounter = (spawnCounter + 1) % 4;
     }
 

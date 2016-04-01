@@ -35,7 +35,6 @@ void setup() {
   frameRate(60);
   bg = loadImage("galaxy.jpg");
 
-
   // Initialize box2d physics and create the world
   box2d = new Box2DProcessing(this);
   box2d.createWorld();
