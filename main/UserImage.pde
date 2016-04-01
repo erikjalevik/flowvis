@@ -8,7 +8,7 @@ class UserImage {
   float x;
   float y;
   PImage img;
-  
+
   // Constructor
   UserImage(float _x, float _y, String imageUrl) {
     x = _x;
@@ -23,8 +23,7 @@ class UserImage {
       img = loadImage(imageUrl, "jpg");
       img.save(dataPath("./cache/" + cacheUrlForUrl(imageUrl)));
     }
-    
-    
+
     // Add the box to the box2d world
     makeBody(new Vec2(x, y));
   }
@@ -86,7 +85,7 @@ class UserImage {
 
     pushMatrix();
     translate(pos.x, pos.y);
-    image(img, -w/2, -h/2, w, h);      
+    image(img, -w/2, -h/2, w, h);
     popMatrix();
   }
 
@@ -97,6 +96,15 @@ class UserImage {
     cacheUrl = cacheUrl.replace("?", "_");
     return cacheUrl;
   }
+
+  // Check if two images would overlap
+  boolean imageIntersect(float xNew, float yNew) {
+    if (dist(x, y, xNew, yNew) < 60) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 class ImageUtils {
@@ -104,12 +112,12 @@ class ImageUtils {
     float red = red(c);
     float green = green(c);
     float blue = blue(c);
-    
+
     float complementRed = 255 - red;
     float complementGreen = 255 - green;
     float complementBlue = 255 - blue;
-  
+
     color complement = color(complementRed, complementGreen, complementBlue);
-    return complement; 
-  } 
+    return complement;
+  }
 }

@@ -32,9 +32,9 @@ class Websocket {
   void displayMessage() {
     UserImage user;
     if(users.containsKey(avatar)) {
-      user = users.get(avatar);
+     user = users.get(avatar);
     } else {
-      user = new UserImage(random(150,650), random(150,450), avatar);
+      user = createNewUserImage();
       users.put(avatar, user);
     }
     
@@ -50,7 +50,7 @@ class Websocket {
       if (i > 8) {
         break;
       }
-      if (words[i].length() > 10) {
+      if (words[i].length() > 15) {
         break;
       }
 
@@ -85,5 +85,25 @@ class Websocket {
     content = response.getString("content");
     println(nick + " says " + content);
     wsMessage = true;
+  }
+
+  UserImage createNewUserImage() {
+    boolean intersect = true;
+    boolean changed = false;
+    float x = random(150,650);
+    float y = random(150,450);
+    while(intersect) {
+      for(UserImage img : users.values()) {
+        if (img.imageIntersect(x,y)) {
+          x = random(150,650);
+          y = random(150,450);
+          changed = true;
+          break;
+        }
+      }
+      if (!changed) {intersect = false;}
+      changed = false;
+    }
+    return new UserImage(x, y, avatar);
   }
 }
