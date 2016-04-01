@@ -11,6 +11,7 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.*;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.contacts.*;
+import org.jbox2d.callbacks.ContactImpulse;
 
 import websockets.*;
 
@@ -43,6 +44,9 @@ void setup() {
   box2d = new Box2DProcessing(this);
   box2d.createWorld();
   box2d.setGravity(0, -0.05); // very slight downward gravity
+
+  // Turn on collision listening!
+  box2d.listenForCollisions();
 
   boxes = new ArrayList<TextBox>();
 
@@ -102,8 +106,19 @@ void draw() {
   
 }
 
-void mousePressed() {
-  synth.play(880, 1.0);
+void beginContact(Contact c) {}
+
+void endContact(Contact c) {}
+
+void postSolve(Contact c, ContactImpulse ci) {
+  float impulse = constrain(ci.normalImpulses[0], 0, 50);
+  float freq = impulse * 10;
+  if (freq > 40 && freq < 1600) {
+    Body body = c.getFixtureA().getBody();
+    float rotation = abs(body.getAngularVelocity());
+    float amp = constrain(rotation, 0, 0.5);
+    synth.play(freq, amp);
+  }
 }
 
 void newMessage(String name) {

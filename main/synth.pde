@@ -33,6 +33,8 @@ class Synth {
   }
 
   void play(float freq, float amp) {
+    out.pauseNotes();
     out.playNote(0, 1.0, new SynthInstrument(freq, amp));
+    out.resumeNotes();
   }
 }
