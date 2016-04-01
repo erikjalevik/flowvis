@@ -23,6 +23,7 @@ HashMap<String, UserImage> users;
 Island thread;
 
 String[] words = { "hey", "here's", "some", "words", "to", "test", "with" };
+String wordBuffer = "";
 String incomingWord = "";
 int counter = 0;
 
@@ -93,6 +94,17 @@ void draw() {
 void mousePressed() {
   incomingWord = words[counter];
   counter = (counter + 1) % words.length;
+}
+
+void keyTyped() {
+  boolean isReturn = (int)key == 10;
+  if (isReturn) {
+     incomingWord = wordBuffer;
+     wordBuffer = "";
+  } else {
+    wordBuffer += key; 
+  }
+  println("typed " + (int)key); 
 }
 
 void beginContact(Contact c) {}
