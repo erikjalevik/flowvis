@@ -19,6 +19,7 @@ Box2DProcessing box2d;
 // A list for all of our rectangles
 ArrayList<TextBox> boxes;
 Island thread;
+UserImage user;
 
 String[] words = { "hey", "here's", "some", "words", "to", "test", "with" };
 String incomingWord = "";
@@ -41,9 +42,9 @@ void setup() {
   box2d.listenForCollisions();
 
   boxes = new ArrayList<TextBox>();
-
   thread = new Island(width / 2, height / 2, 200);
-
+  user = new UserImage(100, 100, "chilicorn_no_text-256.png");
+  
   //String[] fontList = PFont.list();
   //printArray(fontList);
 
@@ -58,6 +59,7 @@ void draw() {
   box2d.step();
 
   thread.display();
+  user.display();
 
   if (!incomingWord.isEmpty()) {
     TextBox b = new TextBox(incomingWord, mouseX, mouseY);
