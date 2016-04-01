@@ -1,17 +1,20 @@
 var ws = require("nodejs-websocket")
 var _ = require('lodash');
 
+// Keep track of connections with the connection store
 var global_counter = 0;
 var all_active_connections = {};
 
-// Scream server example: "hi" -> "HI!!!"
+// Create the server and listen to connections in port 8001
 var server = ws.createServer(function (conn) {
 	console.log("New connection")
 
+	// Add new connections to the connection store
 	var id = global_counter++;
   all_active_connections[id] = conn;
 	conn.id = id;
 
+	// Handler for incoming text
 	conn.on("text", function (str) {
 
     var message = filterMessage(JSON.parse(str));
@@ -22,12 +25,15 @@ var server = ws.createServer(function (conn) {
 			all_active_connections[conn].sendText(JSON.stringify(message));
 		}
 	})
+
+	// Handler for closing connections
 	conn.on("close", function (code, reason) {
 		console.log("Connection closed");
 		delete all_active_connections[conn.id];
 	})
 }).listen(8001)
 
+// Filter junk that's not needed from the message object
 function filterMessage(message) {
 
   // Pick the properties we need
@@ -39,56 +45,3 @@ function filterMessage(message) {
 
   return msg;
 }
-
-// Object {user: "52589", content: "Test", event: "message", tags: Array[0], id: 6…}
-// app
-// :
-// "chat"
-// attachments
-// :
-// Array[0]
-// content
-// :
-// "Test"
-// created_at
-// :
-// "2016-04-01T06:12:54.595Z"
-// edited
-// :
-// null
-// edited_at
-// :
-// null
-// event
-// :
-// "message"
-// flow
-// :
-// "78e9b3f0-d566-4810-9f01-9bc32b5d5cee"
-// id
-// :
-// 6
-// nick
-// :
-// "TimoL"
-// sent
-// :
-// 1459491174595
-// tags
-// :
-// Array[0]
-// thread
-// :
-// Object
-// thread_id
-// :
-// "8NN1O6Y73uduxiwY_CeVg88ICn0"
-// user
-// :
-// "52589"
-// uuid
-// :
-// "KHVQzuH_JaiQmvAw"
-// __proto__
-// :
-// Object
