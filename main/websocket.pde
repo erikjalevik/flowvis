@@ -31,21 +31,20 @@ class Websocket {
 
   void displayMessage() {
     UserImage user;
-    if(users.containsKey(avatar)) {
-     user = users.get(avatar);
+    if (users.containsKey(avatar)) {
+      user = users.get(avatar);
     } else {
       user = createNewUserImage();
       users.put(avatar, user);
     }
     
-    color avgColor = user.getAverageColor();
-    
+    color avgColor = user.getAverageColor();    
     ImageUtils iu = new ImageUtils();
-    
     color cmplColor = iu.getComplementColor(avgColor);
 
     String[] words = content.split(" ");
     TextBox w;
+    Vec2 force = new Vec2(0, 0);
     for(int i=0; i < words.length; i++) {
       if (i > 8) {
         break;
@@ -73,6 +72,23 @@ class Websocket {
       boxes.add(w);
 
       spawnCounter = (spawnCounter + 1) % 4;
+
+      if (words[i].startsWith("@")) { //<>//
+         String targeted = words[i].substring(1);
+         while (targeted.endsWith(",")) targeted = targeted.substring(0, targeted.length() - 1);
+         for (UserImage u: users.values()) {
+             if (u.nick.equalsIgnoreCase(targeted)) {
+                  Vec2 targetPos = u.body.getWorldCenter();    
+                  Vec2 textBoxPos = w.body.getWorldCenter();
+                  force = targetPos.sub(textBoxPos);
+                  force.mulLocal(10);
+             }
+         }
+      }
+    }
+    
+    for (TextBox b: boxes) {
+      b.force = force;
     }
 
     wsMessage = false;
@@ -104,6 +120,6 @@ class Websocket {
       if (!changed) {intersect = false;}
       changed = false;
     }
-    return new UserImage(x, y, avatar);
+    return new UserImage(x, y, avatar, nick);
   }
 }

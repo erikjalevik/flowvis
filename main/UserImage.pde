@@ -8,11 +8,13 @@ class UserImage {
   float x;
   float y;
   PImage img;
+  String nick;
 
   // Constructor
-  UserImage(float _x, float _y, String imageUrl) {
+  UserImage(float _x, float _y, String imageUrl, String _nick) {
     x = _x;
     y = _y;
+    nick = _nick;
 
     String cacheUrl = cacheUrlForUrl(imageUrl);
     File f = new File(dataPath(cacheUrl));

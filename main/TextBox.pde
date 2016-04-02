@@ -16,6 +16,8 @@ class TextBox  {
   float fadeMultiplier = 0.995;
   float alpha = 255;
 
+  Vec2 force = new Vec2(0, 0);
+  
   AudioInstrument instr;
 
   // Constructor
@@ -47,7 +49,7 @@ class TextBox  {
 
     body.setUserData(this);  
   }
-
+  
   // This function adds the rectangle to the box2d world
   Body makeBody(Vec2 center, float w_, float h_) {
 
@@ -74,8 +76,8 @@ class TextBox  {
     body.createFixture(fd);
 
     // Give it some initial random velocity
-    body.setLinearVelocity(new Vec2(random(-16, 16), random(-15, 15)));
-    body.setAngularVelocity(random(-9, 9));
+    body.setLinearVelocity(new Vec2(random(-7, 7), random(-7, 7)));
+    body.setAngularVelocity(random(-15, 15));
 
     return body;
   }
@@ -123,6 +125,8 @@ class TextBox  {
     text(text, 0, 5);
     
     popMatrix();
+    
+    body.applyForceToCenter(force);
   }
 
 }
