@@ -19,16 +19,13 @@ class Audio {
     minim = new Minim(main);
     output = minim.getLineOut();
 
-    // Create a background drone
-    Oscil drone = new Oscil(Frequency.ofPitch("A1").asHz(), 0.05, Waves.SAW);
+    // Create background noise
+    Noise noise = new Noise(0.1, Noise.Tint.RED);
     IIRFilter filter = new LowPassSP(1000, output.sampleRate());
-    Oscil lfo = new Oscil(0.25, 400, Waves.SINE);
-    lfo.offset.setLastValue(500);
+    Oscil lfo = new Oscil(0.25, 50, Waves.SINE);
+    lfo.offset.setLastValue(100);
     lfo.patch(filter.cutoff);
-    drone.patch(filter).patch(output);
-
-    Oscil tri = new Oscil(Frequency.ofPitch("A2").asHz() - 0.25, 0.025, Waves.TRIANGLE);
-    tri.patch(output);
+    noise.patch(filter).patch(output);
   }
 
   AudioInstrument createInstrument() {

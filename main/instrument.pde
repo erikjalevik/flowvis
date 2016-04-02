@@ -18,6 +18,7 @@ class AudioInstrument implements Instrument {
     osc.patch(adsr).patch(delay).patch(pan).patch(out);
   }
 
+
   void destroy() {
     if (!isDestroyed()) {
       osc.unpatch(adsr);
