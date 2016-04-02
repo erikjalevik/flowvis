@@ -6,27 +6,29 @@ class AudioInstrument implements Instrument {
   AudioOutput out;
   boolean destroyed = false;
 
-  AudioInstrument(AudioOutput output) {
+  AudioInstrument(AudioOutput output, boolean patch) {
     int defaultFreq = 440;
     int defaultAmp = 1;
 
-    osc = new Oscil(defaultFreq, defaultAmp, Waves.TRIANGLE);
-    adsr = new ADSR(defaultAmp, 0.001, 0.2, 0.001, 0.001);
-    delay = new Delay(0.6, 0.1, true, true);
-    pan = new Pan(0);
-    out = output;
-    osc.patch(adsr).patch(delay).patch(pan).patch(out);
+    if (patch) {
+      osc = new Oscil(defaultFreq, defaultAmp, Waves.TRIANGLE);
+      adsr = new ADSR(defaultAmp, 0.001, 0.2, 0.001, 0.001);
+      delay = new Delay(0.6, 0.1, true, true);
+      pan = new Pan(0);
+      out = output;
+      osc.patch(adsr).patch(delay).patch(pan).patch(out);
+    }
   }
 
 
   void destroy() {
-    if (!isDestroyed()) {
+    if (osc != null) {
       osc.unpatch(adsr);
       adsr.unpatch(delay);
       delay.unpatch(pan);
       pan.unpatch(out);
-      destroyed = true;
     }
+    destroyed = true;
   }
 
   boolean isDestroyed() {

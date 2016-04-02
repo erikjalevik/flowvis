@@ -81,7 +81,7 @@ class TextBox  {
   // Is the box ready for deletion?
   boolean done() {
     if (alpha < 25) {
-      instr.destroy();
+      audio.destroyInstrument(instr);
     }
 
     if (alpha < 1) {
