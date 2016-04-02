@@ -9,12 +9,15 @@ class UserImage {
   float y;
   PImage img;
   String nick;
+  
+  int colorCode; // passed to textbox to color all the words from this user the same
 
   // Constructor
-  UserImage(float _x, float _y, String imageUrl, String _nick) {
+  UserImage(float _x, float _y, String imageUrl, String _nick, int _colorCode) {
     x = _x;
     y = _y;
     nick = _nick;
+    colorCode = _colorCode;
 
     String cacheUrl = cacheUrlForUrl(imageUrl);
     File f = new File(dataPath(cacheUrl));

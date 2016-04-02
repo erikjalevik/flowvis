@@ -7,12 +7,13 @@ class TextBox  {
   float w;
   float h;
   float margin = 6;
+  int colorIndex = 0;
   
   PFont font;
 
-  color boxColor = #800000;
-  color wordColor = #E00000;
-
+  color[] boxColors = {#991F1F, #99701F, #70991F, #1F991F, #1F9970, #1F7099, #1F1F99, #701F99, #991F70};
+  color[] wordColors = {#E61717, #E6A117, #A1E617, #17E617, #17E6A1, #17A1E6, #1717E6, #A117E6, #E617A1};
+  
   float fadeMultiplier = 0.995;
   float alpha = 255;
 
@@ -21,19 +22,9 @@ class TextBox  {
   AudioInstrument instr;
 
   // Constructor
-  TextBox(String _text, float x, float y) {
-    TextBoxSetup(_text, x, y);
-  }
-
-  // Overload constructor
-  TextBox(String _text, float x, float y, color bColor, color wColor) {
-    boxColor = bColor;
-    wordColor = wColor;
-    TextBoxSetup(_text, x, y);
-  }
-
-  void TextBoxSetup(String _text, float x, float y) {
+  TextBox(String _text, float x, float y, int _colorIndex) { // colorIndex 0..8
     text = _text;
+    colorIndex = _colorIndex;
   
     font = createFont("SharpSansNo1-Bold", 20, true);
     textFont(font);
@@ -77,7 +68,7 @@ class TextBox  {
 
     // Give it some initial random velocity
     body.setLinearVelocity(new Vec2(random(-7, 7), random(-7, 7)));
-    body.setAngularVelocity(random(-15, 15));
+    body.setAngularVelocity(random(-11, 11));
 
     return body;
   }
@@ -114,16 +105,17 @@ class TextBox  {
     translate(pos.x,pos.y); 
     rotate(-a);
     
-    fill(boxColor, alpha);
-    alpha = alpha * fadeMultiplier;
+    fill(boxColors[colorIndex], alpha);
     stroke(#000000, alpha);
     rect(0, 0, w, h);
 
     textAlign(CENTER);
-    fill(wordColor, alpha);
+    fill(wordColors[colorIndex], alpha);
     noStroke();
     text(text, 0, 5);
     
+    alpha = alpha * fadeMultiplier;
+
     popMatrix();
     
     body.applyForceToCenter(force);

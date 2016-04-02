@@ -69,7 +69,7 @@ void draw() {
   }
 
   if (!incomingWord.isEmpty()) {
-    TextBox b = new TextBox(incomingWord, mouseX, mouseY);
+    TextBox b = new TextBox(incomingWord, mouseX, mouseY, 0);
     boxes.add(b);
     incomingWord = "";
   }

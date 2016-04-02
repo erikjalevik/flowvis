@@ -5,6 +5,7 @@ Websocket ws;
 JSONObject response;
 boolean wsMessage;
 int spawnCounter = 0;
+int colorCounter = 0;
 
 // Message properties
 String nick;
@@ -38,10 +39,6 @@ class Websocket {
       users.put(avatar, user);
     }
     
-    color avgColor = user.getAverageColor();    
-    ImageUtils iu = new ImageUtils();
-    color cmplColor = iu.getComplementColor(avgColor);
-
     String[] words = content.split(" ");
     TextBox w;
     Vec2 force = new Vec2(0, 0);
@@ -68,7 +65,7 @@ class Websocket {
         offset.y = 0;
       }
 
-      w = new TextBox(words[i], user.x + offset.x, user.y + offset.y, avgColor, cmplColor);
+      w = new TextBox(words[i], user.x + offset.x, user.y + offset.y, user.colorCode);
       boxes.add(w);
 
       spawnCounter = (spawnCounter + 1) % 4;
@@ -76,7 +73,7 @@ class Websocket {
       if (words[i].startsWith("@")) { //<>//
          String targeted = words[i].substring(1);
          while (targeted.endsWith(",")) targeted = targeted.substring(0, targeted.length() - 1);
-         for (UserImage u: users.values()) {
+         for (UserImage u: users.values()) { //<>//
              if (u.nick.equalsIgnoreCase(targeted)) {
                   Vec2 targetPos = u.body.getWorldCenter();    
                   Vec2 textBoxPos = w.body.getWorldCenter();
@@ -120,6 +117,9 @@ class Websocket {
       if (!changed) {intersect = false;}
       changed = false;
     }
-    return new UserImage(x, y, avatar, nick);
+    
+    UserImage ui = new UserImage(x, y, avatar, nick, (int)random(0, 8));    
+    colorCounter = (colorCounter + 1) % 9;
+    return ui;
   }
 }
