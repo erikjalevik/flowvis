@@ -75,9 +75,9 @@ class Audio {
     instr.osc.setFrequency(Frequency.ofPitch(randomizeNote()).asHz());
     instr.osc.setAmplitude(amp);
     instr.pan.setPan(pan);
-    output.pauseNotes();
-    output.playNote(0, 0.5, instr);
-    output.resumeNotes();
+    if (!instr.isDestroyed()) {
+      output.playNote(0, 0.5, instr);
+    }
   }
 
   boolean isBoxCollision(Contact c) {

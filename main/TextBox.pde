@@ -87,6 +87,10 @@ class TextBox  {
 
   // Is the box ready for deletion?
   boolean done() {
+    if (alpha < 25) {
+      instr.destroy();
+    }
+
     if (alpha < 1) {
       killBody();
       return true;
