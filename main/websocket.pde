@@ -65,10 +65,7 @@ class Websocket {
         offset.y = 0;
       }
 
-      w = new TextBox(words[i], user.x + offset.x, user.y + offset.y, user.colorCode);
-      boxes.add(w);
 
-      spawnCounter = (spawnCounter + 1) % 4;
 
       if (words[i].startsWith("@")) { //<>//
          String targeted = words[i].substring(1);
@@ -76,11 +73,15 @@ class Websocket {
          for (UserImage u: users.values()) { //<>//
              if (u.nick.equalsIgnoreCase(targeted)) {
                   Vec2 targetPos = u.body.getWorldCenter();    
-                  Vec2 textBoxPos = w.body.getWorldCenter();
+                  Vec2 textBoxPos = w.body.getWorldCenter(); //<>//
                   force = targetPos.sub(textBoxPos);
                   force.mulLocal(10);
              }
          }
+      } else {
+        w = new TextBox(words[i], user.x + offset.x, user.y + offset.y, user.colorCode);
+        boxes.add(w);
+        spawnCounter = (spawnCounter + 1) % 4;  
       }
     }
     
