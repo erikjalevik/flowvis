@@ -12,7 +12,7 @@ class TextBox  {
   PFont font;
 
   color[] boxColors = {#991F1F, #99701F, #70991F, #1F991F, #1F9970, #1F7099, #1F1F99, #701F99, #991F70};
-  color[] wordColors = {#E61717, #E6A117, #A1E617, #17E617, #17E6A1, #17A1E6, #1717E6, #A117E6, #E617A1};
+  color[] wordColors = {#E61717, #E6A117, #A1E617, #17E617, #17E6A1, #17A1E6, #5454FF, #A117E6, #E617A1};
   
   float fadeMultiplier = 0.995;
   float alpha = 255;
