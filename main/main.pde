@@ -104,7 +104,6 @@ void keyTyped() {
   } else {
     wordBuffer += key; 
   }
-  println("typed " + (int)key); 
 }
 
 void beginContact(Contact c) {}
